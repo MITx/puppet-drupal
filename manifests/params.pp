@@ -5,8 +5,16 @@
 #
 class drupal::params {
 
+	$cron_user = $operatingsystem ? {
+		ubuntu => 'www-data',
+		debian => 'www-data',
+		default => 'nobody',
+	}
+
+	$cron_yes = 'no'
+
 	$drush_packages = $operatingsystem ? {
-		unbuntu => 'drush',
+		ubuntu => 'drush',
 		debian => 'drush',
 		default => 'drush',
 	}
