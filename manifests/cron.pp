@@ -30,7 +30,7 @@ define drupal::cron (
 		'present' : {
 			cron { "drush-cron-$name" :
 				ensure => present,
-				command => "drush $uri_arg $root_arg $yes_arg cron",
+				command => "drush $uri_arg $root_arg $yes_arg cron 2>&1 > /dev/null",
 				minute => "*/5", 
 				user => $user,
 				require => Class['drupal::drush'],
@@ -40,7 +40,7 @@ define drupal::cron (
 		'absent' : {
 			cron { "drush-cron-$name" :
 				ensure => absent,
-				command => "drush $uri_arg $root_arg $yes_arg cron",
+				command => "drush $uri_arg $root_arg $yes_arg cron 2>&1 > /dev/null",
 				minute => "*/5", 
 				user => $user,
 			}
