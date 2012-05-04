@@ -26,5 +26,7 @@ class drupal {
   # php::fpm::pool { 'www' : ensure => absent }
   # php::fpm::pool { 'drupal': ensure => present }
 
+  include drupal::drush
   include drupal::configuration
+
 }
