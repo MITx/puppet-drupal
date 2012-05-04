@@ -1,0 +1,8 @@
+name 'thsutton-nginx'
+author 'thsutton'
+description 'Install and configure Nginx.'
+summary 'Install and configure Nginx.'
+license 'BSD3'
+source 'https://github.com/thsutton/puppet-tomcat.git'
+project_page ''
+version '0.0.1'
