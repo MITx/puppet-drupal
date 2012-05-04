@@ -14,8 +14,8 @@
 #   }
 #
 class drupal::configuration ( $include_support = [] ) {
-    file { '/etc/nginx/drupal-site.conf' :
-        ensure => present,
-        content = template('drupal/nginx-drupal.erb'),
-    }
+  file { '/etc/nginx/drupal-site.conf' :
+    ensure => present,
+    content = template('drupal/nginx-drupal.erb'),
+  }
 }

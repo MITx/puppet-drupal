@@ -8,7 +8,7 @@ server {
 
     index index.php index.html;
     server_name <%= "hello" %>;
-    
+
     location @drupal {
         fastcgi_pass 127.0.0.1:9000;
     }
@@ -17,7 +17,7 @@ server {
     #location = /404.html {
     #    root /usr/share/nginx/www;
     #}
-    
+
     error_page 500 502 503 504 /50x.html;
     location = /50x.html {
         root /usr/share/nginx/www;

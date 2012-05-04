@@ -15,16 +15,16 @@
 #
 class drupal {
 
-    include nginx
-    include php::fpm
-    include mysql::server
-    
-    # php::extension { 'apc' : ensure => present }
-    # php::extension { 'gd' : ensure => present }
-    # php::extension { 'mysql' : ensure => present }
+  include nginx
+  include php::fpm
+  include mysql::server
 
-    # php::fpm::pool { 'www' : ensure => absent }
-    # php::fpm::pool { 'drupal': ensure => present }
+  # php::extension { 'apc' : ensure => present }
+  # php::extension { 'gd' : ensure => present }
+  # php::extension { 'mysql' : ensure => present }
 
-    include drupal::configuration
+  # php::fpm::pool { 'www' : ensure => absent }
+  # php::fpm::pool { 'drupal': ensure => present }
+
+  include drupal::configuration
 }
