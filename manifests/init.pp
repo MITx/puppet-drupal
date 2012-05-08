@@ -16,12 +16,13 @@
 class drupal {
 
   include nginx
-  include php::fpm
+  #include php::fpm
   include mysql::server
 
-  # php::extension { 'apc' : ensure => present }
-  # php::extension { 'gd' : ensure => present }
-  # php::extension { 'mysql' : ensure => present }
+  php::extension { 'apc' : ensure => enabled }
+  php::extension { 'gd' : ensure => enabled }
+  php::extension { 'mysql' : ensure => enabled }
+  php::extension { 'curl' : ensure => enabled }
 
   # php::fpm::pool { 'www' : ensure => absent }
   # php::fpm::pool { 'drupal': ensure => present }

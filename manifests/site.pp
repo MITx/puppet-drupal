@@ -1,9 +1,28 @@
-
+#
+# = Type: drupal::site
+#
+# Configure database and web server to host a Drupal web-site.
+#
+# == Parameters:
+#
+# $ensure::   Configure site? Default: present.
+# $path::     Path to web root.
+# $hostname:: Canonical hostname for the site.
+# $aliases::  Other server names.
+# $dbname::   Database name.
+# $dbuser::   Database username.
+# $dbpass::   Database password.
+# $dbhost::   Database password. Default: localhost
+# $pool::     PHP FPM pool to use. Default: www
+# $sslkey::   SSL key file. Optional.
+# $sslcrt::   SSL certificate file. Optional.
+#
 # == Sample Usage:
 #
 #   drupal::site { 'robocop' :
 #     ensure => present,
 #     path => '/var/www/robocop/',
+#     hostname  => 'robocop.ocp.com',
 #     dbhost => 'db1.ocp.com',
 #     dbname => 'robocop_site',
 #     dbuser => 'robocop',
@@ -12,8 +31,9 @@
 #   }
 #
 define drupal::site (
-  $ensure => present
+    $ensure = 'present'
   , $path
+  , $hostname
   , $dbname
   , $dbuser
   , $dbpass
@@ -21,6 +41,16 @@ define drupal::site (
   , $pool = 'www'
   , $ssl = undef
 ) {
+
+  $site_conf = "/etc/nginx/sites-available/$title"
+  $nginx_fastcgi_config = "/etc/nginx/includes/fastcgi_params.conf"
+  $nginx_site_config = "/etc/nginx/includes/drupal_site_config.conf"
+
+  file { "drupal-site-title" :
+    ensure => present,
+    path => $site_config,
+    content => template('drupal/nginx-site.conf'),
+  }
 
   case $ensure {
     'present' : {
@@ -55,6 +85,11 @@ define drupal::site (
     target => "/etc/nginx/sites-available/drupal-$title",
     require => File["/etc/nginx/sites-available/drupal-$title"],
     notify => Class['nginx::service'],
+  }
+
+  drupal::cron { $title :
+    path => $path,
+    uri => $uri,
   }
 
   Class['drupal::configuration'] -> Defined::Type["$title"]

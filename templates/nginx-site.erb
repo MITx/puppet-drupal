@@ -3,25 +3,10 @@
 ##
 
 server {
-    listen *;
+    include <%= nginx_fastcgi_config %>;
+    # limit_conn gulag 32;
+    listen <%= listen %>;
+    server_name <%= server_name %>;
     root <%= path %>;
-
-    index index.php index.html;
-    server_name <%= "hello" %>;
-
-    location @drupal {
-        fastcgi_pass 127.0.0.1:9000;
-    }
-
-    #error_page 404 /404.html;
-    #location = /404.html {
-    #    root /usr/share/nginx/www;
-    #}
-
-    error_page 500 502 503 504 /50x.html;
-    location = /50x.html {
-        root /usr/share/nginx/www;
-    }
-
-    # include <% drupal_path %>;
+    include <%= nginx_site_config %>;
 }
