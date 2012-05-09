@@ -3,15 +3,12 @@
 #
 # Install the Drush command line interface for Drupal.
 #
-class drupal::drush {
+class drupal::drush (
+	$packages = $drupal::params::drush_packages
+) inherits drupal::params {
 
-  $package = $operatingsystem ? {
-    ubuntu => 'drush',
-    debian => 'drush',
-  }
-
-  package { $package :
-    ensure => present,
+  package { $packages :
+    ensure => installed,
   }
 
 }
