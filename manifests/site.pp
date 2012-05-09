@@ -42,15 +42,11 @@ define drupal::site (
   , $ssl = undef
 ) {
 
-  $site_conf = "/etc/nginx/sites-available/$title"
+  # XXX TODO: These paths should be set in drupal::params
+  $site_conf = "/etc/nginx/sites-available"
   $nginx_fastcgi_config = "/etc/nginx/includes/fastcgi_params.conf"
   $nginx_site_config = "/etc/nginx/includes/drupal_site_config.conf"
 
-  file { "drupal-site-title" :
-    ensure => present,
-    path => $site_config,
-    content => template('drupal/nginx-site.conf'),
-  }
 
   case $ensure {
     'present' : {
@@ -72,9 +68,13 @@ define drupal::site (
     privileges => all
   }
 
-  file { "/etc/nginx/sites-available/drupal-$title" :
-    ensure => $ensure,
-    content => template('drupal/nginx-site.erb'),
+
+  # Build the site configuration file.
+  file { "drupal-site-$title" :
+    ensure => present,
+    path => "$site_config/drupal-$title",
+    content => template('drupal/nginx-site.conf'),
+    require => [Class['drupal::configuration']],
   }
 
   file { "/etc/nginx/sites-enabled/drupal-$title" :
@@ -83,7 +83,7 @@ define drupal::site (
       default => 'absent',
     },
     target => "/etc/nginx/sites-available/drupal-$title",
-    require => File["/etc/nginx/sites-available/drupal-$title"],
+    require => File["drupal-site-$title"],
     notify => Class['nginx::service'],
   }
 

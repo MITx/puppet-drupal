@@ -13,15 +13,12 @@
 #     include_support => ['ad'],
 #   }
 #
-class drupal::configuration ( $include_support = [] ) {
-
-  # XXX TODO: Set this file up.
-  $nginx_fastcgi_config = "/etc/nginx/includes/fastcgi_params.conf"
-  # XXX TODO: Create this file.
-  $nginx_site_config = "/etc/nginx/includes/drupal_site_config.conf"
-  #
-  $nginx_includes = "/etc/nginx/includes"
-
+class drupal::configuration ( 
+    $include_support = $drupal::params::nginx_support_modules
+  , $nginx_includes = $drupal::params::nginx_includes
+  , $nginx_fastcgi_config = $drupal::params::nginx_fastcgi_config
+  , $nginx_site_config = $drupal::params::nginx_site_config
+) inherits drupal::params {
 
   file { $nginx_includes :
     ensure => directory,
