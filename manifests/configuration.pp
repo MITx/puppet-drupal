@@ -19,10 +19,20 @@ class drupal::configuration ( $include_support = [] ) {
   $nginx_fastcgi_config = "/etc/nginx/includes/fastcgi_params.conf"
   # XXX TODO: Create this file.
   $nginx_site_config = "/etc/nginx/includes/drupal_site_config.conf"
+  #
+  $nginx_includes = "/etc/nginx/includes"
+
+
+  file { $nginx_includes :
+    ensure => directory,
+    owner => "root",
+    group => "root",
+    mode => "0755",
+  }
   
   file { $nginx_site_config :
     ensure => present,
-    content = template('drupal/nginx-drupal.erb'),
+    content => template('drupal/nginx-drupal.erb'),
   }
 
   file { $nginx_fastcgi_config :
@@ -31,3 +41,5 @@ class drupal::configuration ( $include_support = [] ) {
   }
   
 }
+
+Package['nginx'] -> Class['drupal::configuration']

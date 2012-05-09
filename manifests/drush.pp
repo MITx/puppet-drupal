@@ -6,8 +6,8 @@
 class drupal::drush {
 
   $package = $operatingsystem ? {
-    ubuntu : 'drush',
-    debian : 'drush',
+    ubuntu => 'drush',
+    debian => 'drush',
   }
 
   package { $package :

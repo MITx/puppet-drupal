@@ -16,7 +16,7 @@
 class drupal {
 
   include nginx
-  #include php::fpm
+  include php::sapi::fpm
   include mysql::server
 
   php::extension { 'apc' : ensure => enabled }
