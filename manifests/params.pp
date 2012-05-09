@@ -11,7 +11,7 @@ class drupal::params {
 		default => 'nobody',
 	}
 
-	$cron_yes = 'no'
+	$cron_default = 'enable'
 
 	$drush_packages = $operatingsystem ? {
 		ubuntu => 'drush',

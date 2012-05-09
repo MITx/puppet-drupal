@@ -27,6 +27,7 @@
 #
 define drupal::cron (
     $path
+  , $ensure = "present",
   , $uri = undef
   , $user = "www-data"
   , $hours = "*"
@@ -47,6 +48,7 @@ define drupal::cron (
   $run_command = "/usr/bin/env PATH=/usr/sbin:/usr/bin:/sbin:/bin COLUMNS=72"
 
   cron { "drupal-cron-$title" :
+    ensure  => $ensure,
     command => "$run_command $command",
     user    => $user,
     hour    => $hours,
