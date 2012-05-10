@@ -18,6 +18,7 @@ class drupal::configuration (
   , $nginx_includes = $drupal::params::nginx_includes
   , $nginx_fastcgi_config = $drupal::params::nginx_fastcgi_config
   , $nginx_site_config = $drupal::params::nginx_site_config
+  , $nginx_server_config = '/etc/nginx/conf.d/drupal.conf'
 ) inherits drupal::params {
 
   file { $nginx_includes :
@@ -35,6 +36,14 @@ class drupal::configuration (
   file { $nginx_fastcgi_config :
     ensure => present,
     content => template('drupal/nginx-fastcgi.erb'),
+  }
+
+  file { $nginx_server_config :
+    ensure => present,
+    owner => 'root',
+    group => 'root',
+    mode => '0644',
+    content => template('drupal/nginx-server.erb'),
   }
   
 }

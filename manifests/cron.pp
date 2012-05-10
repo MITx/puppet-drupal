@@ -27,7 +27,7 @@
 #
 define drupal::cron (
     $path
-  , $ensure = "present",
+  , $ensure = "present"
   , $uri = undef
   , $user = "www-data"
   , $hours = "*"

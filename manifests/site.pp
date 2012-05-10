@@ -34,6 +34,7 @@ define drupal::site (
     $ensure = 'present'
   , $path
   , $hostname
+  , $aliases = []
   , $dbname
   , $dbuser
   , $dbpass
@@ -42,10 +43,14 @@ define drupal::site (
   , $ssl = undef
 ) {
 
+  include nginx::service
+
   # XXX TODO: These paths should be set in drupal::params
-  $site_conf = "/etc/nginx/sites-available"
+  $site_config = "/etc/nginx/sites-available"
   $nginx_fastcgi_config = "/etc/nginx/includes/fastcgi_params.conf"
   $nginx_site_config = "/etc/nginx/includes/drupal_site_config.conf"
+
+  $uri = "http://$hostname/"
 
 
   case $ensure {
@@ -56,35 +61,32 @@ define drupal::site (
   }
 
   # MySQL configuration
-  mysql_user { "$dbuser@$dbhost" :
-    ensure => $ensure,
-    password => mysql_hash($dbpass)
+  mysql::db { $dbname :
+    user => $dbuser,
+    password => $dbpass,
+    host => $dbhost,
+    grant => ['all'],
   }
-  mysql_database { "$dbhost/$dbname" :
-    ensure => $ensure,
-  }
-  mysql_grant { "$dbuser@$dbhost/$dbname" :
-    ensure => $ensure,
-    privileges => all
-  }
-
 
   # Build the site configuration file.
+
+  $listen = "80"
+
   file { "drupal-site-$title" :
     ensure => present,
     path => "$site_config/drupal-$title",
-    content => template('drupal/nginx-site.conf'),
+    content => template('drupal/nginx-site.erb'),
     require => [Class['drupal::configuration']],
   }
 
   file { "/etc/nginx/sites-enabled/drupal-$title" :
     ensure => $ensure ? {
-      enabled, present => 'link',
+      enabled => 'link',
+      present => 'link',
       default => 'absent',
     },
     target => "/etc/nginx/sites-available/drupal-$title",
     require => File["drupal-site-$title"],
-    notify => Class['nginx::service'],
   }
 
   drupal::cron { $title :
@@ -92,6 +94,6 @@ define drupal::site (
     uri => $uri,
   }
 
-  Class['drupal::configuration'] -> Defined::Type["$title"]
+  Drupal::Site["$title"] ~> Class['nginx::service']
 }
 

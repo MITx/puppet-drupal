@@ -6,7 +6,7 @@ server {
     include <%= nginx_fastcgi_config %>;
     # limit_conn gulag 32;
     listen <%= listen %>;
-    server_name <%= server_name %>;
+    server_name <%= hostname %> <%= aliases %>;
     root <%= path %>;
     include <%= nginx_site_config %>;
 }

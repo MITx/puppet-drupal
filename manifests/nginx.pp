@@ -5,8 +5,8 @@
 #
 # == Requires:
 #
+# puppetlabs-mysql
 # thsutton-nginx
-# thsutton-mysql
 # thsutton-php
 #
 # == Sample Usage:
@@ -20,9 +20,16 @@ class drupal::nginx {
   include mysql::server
 
   php::extension { 'apc' : ensure => enabled }
-  php::extension { 'gd' : ensure => enabled }
-  php::extension { 'mysql' : ensure => enabled }
   php::extension { 'curl' : ensure => enabled }
+  php::extension { 'gd' : ensure => enabled }
+  php::extension { 'mcrypt' : ensure => enabled }
+  php::extension { 'mysql' : ensure => enabled }
+
+  augeas { "configure-apc-cache" :
+    context => "/files/etc/php5/conf.d/apc.ini",
+    changes => ["set apc/apc.enabled 1", "set apc/apc.shm_size 128M"],
+    notify => Class['php::sapi::fpm::service'],
+  }
 
   # php::fpm::pool { 'www' : ensure => absent }
   # php::fpm::pool { 'drupal': ensure => present }
