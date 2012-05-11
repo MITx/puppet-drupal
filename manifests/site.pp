@@ -14,6 +14,7 @@
 # $dbpass::   Database password.
 # $dbhost::   Database password. Default: localhost
 # $pool::     PHP FPM pool to use. Default: www
+# $redirect_hosts:: List of Nginx hostnames to redirect.
 # $sslkey::   SSL key file. Optional.
 # $sslcrt::   SSL certificate file. Optional.
 #
@@ -28,6 +29,7 @@
 #     dbuser => 'robocop',
 #     dbpass => 'robopass',
 #     pool => 'ocp',
+#     redirect_hosts => '*.robocop.ocp.com *.robocop.com police.detroitmi.gov',
 #   }
 #
 define drupal::site (
@@ -40,6 +42,7 @@ define drupal::site (
   , $dbpass
   , $dbhost = 'localhost'
   , $pool = 'www'
+  , $redirect_hosts = ''
   , $ssl = undef
 ) {
 

@@ -10,3 +10,10 @@ server {
     root <%= path %>;
     include <%= nginx_site_config %>;
 }
+
+<% if redirect_hosts && redirect_hosts != '' -%>
+server {
+    server_name <%= redirect_hosts %>;
+    rewrite ^ http://<%= hostname %>$request_uri? permanent;
+}
+<% end -%>
