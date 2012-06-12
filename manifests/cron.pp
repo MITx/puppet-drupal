@@ -40,7 +40,7 @@ define drupal::cron (
     undef   => "",
     default => "--uri=$uri",
   }
-  $real_quite = $quiet ? {
+  $real_quiet = $quiet ? {
     false   => "",
     default => "--quiet",
   }
