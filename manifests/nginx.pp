@@ -25,6 +25,12 @@ class drupal::nginx {
   php::extension { 'mcrypt' : ensure => enabled }
   php::extension { 'mysql' : ensure => enabled }
 
+  augeas { "configure-php-limit" :
+    context => "/files/etc/php5/fpm/php.ini",
+    changes => ["set PHP/memory_limit 96M"],
+    notify => Class['php::sapi::fpm::service'],
+  }
+
   augeas { "configure-apc-cache" :
     context => "/files/etc/php5/conf.d/apc.ini",
     changes => ["set apc/apc.enabled 1", "set apc/apc.shm_size 128M"],
