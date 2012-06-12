@@ -64,10 +64,11 @@ define drupal::cron (
     default => "--quiet",
   }
 
-  # Build the command
+  # Build the command strings.
   $command = "drush $real_path $real_uri $real_quiet core-cron"
   $run_command = "/usr/bin/env PATH=/usr/sbin:/usr/bin:/sbin:/bin COLUMNS=72"
 
+  # Create the cron resource.
   cron { "drupal-cron-$title" :
     ensure  => $ensure,
     command => "$run_command $command",
