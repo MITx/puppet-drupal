@@ -44,6 +44,7 @@ define drupal::site (
   , $pool = 'www'
   , $redirect_hosts = ''
   , $ssl = undef
+  , $passwdfile = ''
 ) {
 
   include nginx::service

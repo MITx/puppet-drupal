@@ -9,6 +9,11 @@ server {
     server_name <%= hostname %> <%= aliases %>;
     root <%= path %>;
     include <%= nginx_site_config %>;
+
+<% if passwdfile && passwdfile != '' -%>
+    auth_basic            "Restricted";
+    auth_basic_user_file  <%= passwdfile %>;
+<% end -%>
 }
 
 <% if redirect_hosts && redirect_hosts != '' -%>
