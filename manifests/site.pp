@@ -43,7 +43,8 @@ define drupal::site (
   , $dbhost = 'localhost'
   , $pool = 'www'
   , $redirect_hosts = ''
-  , $ssl = undef
+  , $sslkey = undef
+  , $sslcrt = undef
   , $passwdfile = ''
 ) {
 
@@ -55,7 +56,6 @@ define drupal::site (
   $nginx_site_config = "/etc/nginx/includes/drupal_site_config.conf"
 
   $uri = "http://$hostname/"
-
 
   case $ensure {
     'present' : {
