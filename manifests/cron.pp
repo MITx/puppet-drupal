@@ -1,50 +1,83 @@
-# Resource: drupal::cron
 #
-# Add a cron job for a Drupal site.
+# = Class: drupal::cron
+#
+# Configure a cron job to process cron tasks for a Drupal site. Invokes drush
+# to handle the processing.
+#
+# == Parameters:
+#
+# $root::    Path to the Drupal site.
+# $uri::     URI for the Drupal site.
+# $user::    User to own cron job.
+# $hours::   Cron hours specification.
+# $minutes:: Cron minutes specification.
+# $quiet::   Be quiet?
+#
+# Users must specify either $path or $root, but not both.
+# 
+# == Requires:
+#
+# drupal::drush
+#
+# == Sample Usage:
+#
+#  class { 'mysite' :
+#    drupal::cron { 'mysite' :
+#      ensure => present,
+#      path => '/var/www/mysite/htdocs',
+#      uri => "http://mysite.org/",
+#    }
+#  }
 #
 define drupal::cron (
-	$ensure = "present",
-	$root,
-	$uri="",
-	$user = $drupal::params::cron_user,
-	$yes = $drupal::params::cron_yes
+    $ensure = "present"
+  , $root
+  , $uri=""
+  , $quiet = $drupal::params::cron_quiet
+  , $yes = $drupal::params::cron_yes
+  , $user = $drupal::params::cron_user
+  , $hours = "*"
+  , $minutes = "*/5"
+  , $path = $drupal::params::cron_path
 ) {
 
-	# Build the arguments to pass to the cron job
-	$uri_arg = $uri ? {
+  # We'll use drush in our cron job.
+  include drupal::drush
+  Class['drupal::drush'] -> Drupal::Cron["$title"]
+
+  # Build the arguments to the command.
+  $root_arg = "--root=$root"
+
+  $uri_arg = $uri ? {
 		"" => "",
 		default => "--uri='$uri'",
 	}
-	$root_arg = $root ? {
-		"" => "",
-		default => "--root='$root'",
-	}
-	$yes_arg = $yes ? {
-		"yes" => "--yes",
-		"true" => "--yes",
-		"enable" => "--yes",
+
+  $quiet_arg = $quiet ? {
+    false   => "",
+    no      => "",
+    ""      => "",
+    default => "--quiet",
+  }
+
+  $yes_arg = $yes ? {
+		yes     => "--yes",
+		true    => "--yes",
+		enable  => "--yes",
 		default => "",
 	}
+	
+	# Build the command strings.
+  $command = "drush $quiet_arg $yes_arg $root_arg $uri_arg core-cron"
+  $run_command = "/usr/bin/env PATH=$path COLUMNS=72"
 
-	case $ensure {
-		'present' : {
-			cron { "drush-cron-$name" :
-				ensure => present,
-				command => "drush $uri_arg $root_arg $yes_arg cron 2>&1 > /dev/null",
-				minute => "*/5", 
-				user => $user,
-				require => Class['drupal::drush'],
-			}
-		}
-
-		'absent' : {
-			cron { "drush-cron-$name" :
-				ensure => absent,
-				command => "drush $uri_arg $root_arg $yes_arg cron 2>&1 > /dev/null",
-				minute => "*/5", 
-				user => $user,
-			}
-		}
-	}
+  # Create the cron resource.
+  cron { "drupal-cron-$title" :
+    ensure  => $ensure,
+    command => "$run_command $command",
+    user    => $user,
+    hour    => $hours,
+    minute  => $minutes,
+  }
 
 }

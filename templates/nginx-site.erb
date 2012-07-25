@@ -1,0 +1,69 @@
+##
+## THIS FILE IS MANAGED BY PUPPET!
+##
+
+server {
+    listen <%= listen %>;
+    server_name <%= hostname %> <%= aliases %>;
+    root <%= path %>;
+
+    # limit_conn gulag 32;
+
+    include <%= nginx_fastcgi_config %>;
+    include <%= nginx_site_config %>;
+
+<% if passwdfile && passwdfile != '' -%>
+    satisfy any;
+    allow 127.0.0.1;
+    deny all;
+    auth_basic            "Restricted";
+    auth_basic_user_file  <%= passwdfile %>;
+<% end -%>
+}
+
+<% if redirect_hosts && redirect_hosts != '' -%>
+server {
+    server_name <%= redirect_hosts %>;
+    rewrite ^ http://<%= hostname %>$request_uri? permanent;
+}
+<% end -%>
+
+<% if sslkey != :undef && sslcrt != :undef -%>
+
+# SSL support
+server {
+    listen 443;
+    server_name <%= hostname %> <%= aliases %>;
+    root <%= path %>;
+
+    # limit_conn gulag 32;
+
+    ssl on;
+    ssl_certificate <%= sslcrt %>;
+    ssl_certificate_key <%= sslkey %>;
+
+    ssl_protocols SSLv3 TLSv1;
+    ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+    ssl_prefer_server_ciphers on;
+    ssl_session_timeout 5m;
+
+    include <%= nginx_fastcgi_config %>;
+    include <%= nginx_site_config %>;
+
+<% if passwdfile && passwdfile != '' -%>
+    satisfy any;
+    allow 127.0.0.1;
+    deny all;
+    auth_basic            "Restricted";
+    auth_basic_user_file  <%= passwdfile %>;
+<% end -%>
+}
+
+<% if redirect_hosts && redirect_hosts != '' -%>
+server {
+    listen 443;
+    server_name <%= redirect_hosts %>;
+    rewrite ^ https://<%= hostname %>$request_uri? permanent;
+}
+<% end -%>
+<% end %>

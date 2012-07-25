@@ -1,0 +1,8 @@
+name 'thsutton-drupal'
+author 'thsutton'
+description 'Configure web-hosting for Drupal sites.'
+summary 'Configure web-hosting for Drupal sites.'
+license 'BSD3'
+source 'https://github.com/thsutton/puppet-drupal.git'
+project_page ''
+version '0.0.2'
