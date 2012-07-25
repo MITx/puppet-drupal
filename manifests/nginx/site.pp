@@ -1,5 +1,5 @@
 #
-# = Type: drupal::site
+# = Type: drupal::nginx::site
 #
 # Configure database and web server to host a Drupal web-site.
 #
@@ -20,7 +20,7 @@
 #
 # == Sample Usage:
 #
-#   drupal::site { 'robocop' :
+#   drupal::nginx::site { 'robocop' :
 #     ensure => present,
 #     path => '/var/www/robocop/',
 #     hostname  => 'robocop.ocp.com',
@@ -32,7 +32,7 @@
 #     redirect_hosts => '*.robocop.ocp.com *.robocop.com police.detroitmi.gov',
 #   }
 #
-define drupal::site (
+define drupal::nginx::site (
     $ensure = 'present'
   , $path
   , $hostname
@@ -48,14 +48,14 @@ define drupal::site (
   , $passwdfile = ''
 ) {
 
+  include drupal::nginx
   include nginx::service
+  Drupal::Site["$title"] ~> Class['nginx::service']
 
   # XXX TODO: These paths should be set in drupal::params
   $site_config = "/etc/nginx/sites-available"
   $nginx_fastcgi_config = "/etc/nginx/includes/fastcgi_params.conf"
   $nginx_site_config = "/etc/nginx/includes/drupal_site_config.conf"
-
-  $uri = "http://$hostname/"
 
   case $ensure {
     'present' : {
@@ -73,9 +73,10 @@ define drupal::site (
   }
 
   # Build the site configuration file.
-
+  $uri = "http://$hostname/"
   $listen = "80"
 
+  # Create the configuration file for the site.
   file { "drupal-site-$title" :
     ensure => present,
     path => "$site_config/drupal-$title",
@@ -83,6 +84,7 @@ define drupal::site (
     require => [Class['drupal::configuration']],
   }
 
+  # Link the configuration file into place.
   file { "/etc/nginx/sites-enabled/drupal-$title" :
     ensure => $ensure ? {
       enabled => 'link',
@@ -93,11 +95,10 @@ define drupal::site (
     require => File["drupal-site-$title"],
   }
 
+  # Configure a cron job for the resource.
   drupal::cron { $title :
     path => $path,
     uri => $uri,
   }
-
-  Drupal::Site["$title"] ~> Class['nginx::service']
 }
 

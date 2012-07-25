@@ -1,4 +1,4 @@
-# = Class: drupal::configuration
+# = Class: drupal::nginx::configuration
 #
 # This class creates the Drupal-specific configuration files for use
 # by Nginx vhosts, etc.
@@ -9,11 +9,11 @@
 #
 # == Sample Usage:
 #
-#   class { 'drupal::configuration' :
+#   class { 'drupal::nginx::configuration' :
 #     include_support => ['ad'],
 #   }
 #
-class drupal::configuration ( 
+class drupal::nginx::configuration ( 
     $include_support = $drupal::params::nginx_support_modules
   , $nginx_includes = $drupal::params::nginx_includes
   , $nginx_fastcgi_config = $drupal::params::nginx_fastcgi_config

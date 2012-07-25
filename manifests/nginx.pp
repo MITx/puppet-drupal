@@ -1,7 +1,7 @@
 #
 # = Class: drupal::nginx
 #
-# Install and configure services to host Drupal sites.
+# Install and configure services to host Drupal sites using Nginx and PHP-FPM.
 #
 # == Requires:
 #
@@ -15,31 +15,20 @@
 #
 class drupal::nginx {
 
+  # Ensure Nginx and PHP-FPM are installed.
   include nginx
   include php::sapi::fpm
-  include mysql::server
 
-  php::extension { 'apc' : ensure => enabled }
-  php::extension { 'curl' : ensure => enabled }
-  php::extension { 'gd' : ensure => enabled }
-  php::extension { 'mcrypt' : ensure => enabled }
-  php::extension { 'mysql' : ensure => enabled }
+  # Install Drush and our configuration
+  include drupal::drush  
+  include drupal::nginx::configuration
 
+  # Update the PHP memory limit.
+  # XXX TODO: This config file should be a parameter
   augeas { "configure-php-limit" :
     context => "/files/etc/php5/fpm/php.ini",
     changes => ["set PHP/memory_limit 96M"],
     notify => Class['php::sapi::fpm::service'],
   }
 
-  augeas { "configure-apc-cache" :
-    context => "/files/etc/php5/conf.d/apc.ini",
-    changes => ["set apc/apc.enabled 1", "set apc/apc.shm_size 128M"],
-    notify => Class['php::sapi::fpm::service'],
-  }
-
-  # php::fpm::pool { 'www' : ensure => absent }
-  # php::fpm::pool { 'drupal': ensure => present }
-
-  include drupal::drush
-  include drupal::configuration
 }
