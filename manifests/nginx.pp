@@ -20,6 +20,7 @@ class drupal::nginx {
   include php::sapi::fpm
 
   # Install Drush and our configuration
+  include drupal
   include drupal::drush  
   include drupal::nginx::configuration
 
