@@ -14,7 +14,7 @@
 # $quiet::   Be quiet?
 #
 # Users must specify either $path or $root, but not both.
-# 
+#
 # == Requires:
 #
 # drupal::drush
@@ -31,7 +31,6 @@
 #
 define drupal::cron (
     $ensure = "present"
-  , $root
   , $uri=""
   , $quiet = $drupal::params::cron_quiet
   , $yes = $drupal::params::cron_yes
@@ -66,7 +65,7 @@ define drupal::cron (
 		enable  => "--yes",
 		default => "",
 	}
-	
+
 	# Build the command strings.
   $command = "drush $quiet_arg $yes_arg $root_arg $uri_arg core-cron"
   $run_command = "/usr/bin/env PATH=$path COLUMNS=72"

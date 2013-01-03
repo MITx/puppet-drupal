@@ -45,8 +45,10 @@ define drupal::nginx::site (
 ) {
 
   include drupal::nginx
+  include ::nginx
 
-  Drupal::Site["$title"] ~> Class['nginx::service']
+  # TODO Need to fix the service notifier
+  # Drupal::Site["$title"] ~> Class['nginx::service']
 
   # XXX TODO: These paths should be set in drupal::params
   $site_config = "/etc/nginx/sites-available"
@@ -69,7 +71,8 @@ define drupal::nginx::site (
     ensure => present,
     path => "$site_config/drupal-$title",
     content => template('drupal/nginx-site.erb'),
-    require => [Class['drupal::configuration']],
+    # TODO this can probably be removed?
+    # require => [Class['drupal::configuration']],
   }
 
   # Link the configuration file into place.
@@ -84,7 +87,7 @@ define drupal::nginx::site (
   }
 
   # nginx configuration for version info
-  nginx::site { 'mitx-release':
+  ::nginx::site { 'mitx-release':
     ensure => 'enabled',
     source => 'puppet:///modules/lms/nginx/mitx-release',
   }
