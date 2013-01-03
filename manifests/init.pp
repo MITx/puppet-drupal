@@ -27,6 +27,7 @@ class drupal {
   augeas { "configure-apc-cache" :
     context => "/files/etc/php5/conf.d/apc.ini",
     changes => ["set apc/apc.enabled 1", "set apc/apc.shm_size 128M"],
+    require => Class['drupal::deps'],
     # notify => Class['php::sapi::fpm::service'],
   }
 
