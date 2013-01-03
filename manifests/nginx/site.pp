@@ -33,23 +33,19 @@
 #   }
 #
 define drupal::nginx::site (
-    $ensure = 'present'
-  , $path
-  , $hostname
-  , $aliases = []
-  , $dbname
-  , $dbuser
-  , $dbpass
-  , $dbhost = 'localhost'
-  , $pool = 'www'
-  , $redirect_hosts = ''
-  , $sslkey = undef
-  , $sslcrt = undef
-  , $passwdfile = ''
+    $ensure = 'present',
+    $path,
+    $hostname,
+    $aliases = [],
+    $pool = 'www',
+    $redirect_hosts = '',
+    $sslkey = undef,
+    $sslcrt = undef,
+    $passwdfile = ''
 ) {
 
   include drupal::nginx
-  include nginx::service
+
   Drupal::Site["$title"] ~> Class['nginx::service']
 
   # XXX TODO: These paths should be set in drupal::params
@@ -62,14 +58,6 @@ define drupal::nginx::site (
       # Require File[$path]
       # Require Php::Fpm::Pool[$pool]
     }
-  }
-
-  # MySQL configuration
-  mysql::db { $dbname :
-    user => $dbuser,
-    password => $dbpass,
-    host => $dbhost,
-    grant => ['all'],
   }
 
   # Build the site configuration file.
@@ -93,6 +81,12 @@ define drupal::nginx::site (
     },
     target => "/etc/nginx/sites-available/drupal-$title",
     require => File["drupal-site-$title"],
+  }
+
+  # nginx configuration for version info
+  nginx::site { 'mitx-release':
+    ensure => 'enabled',
+    source => 'puppet:///modules/lms/nginx/mitx-release',
   }
 
   # Configure a cron job for the resource.

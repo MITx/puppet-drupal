@@ -13,7 +13,7 @@
 #     include_support => ['ad'],
 #   }
 #
-class drupal::nginx::configuration ( 
+class drupal::nginx::configuration (
     $include_support = $drupal::params::nginx_support_modules
   , $nginx_includes = $drupal::params::nginx_includes
   , $nginx_fastcgi_config = $drupal::params::nginx_fastcgi_config
@@ -27,7 +27,7 @@ class drupal::nginx::configuration (
     group => "root",
     mode => "0755",
   }
-  
+
   file { $nginx_site_config :
     ensure => present,
     content => template('drupal/nginx-drupal.erb'),
@@ -45,7 +45,7 @@ class drupal::nginx::configuration (
     mode => '0644',
     content => template('drupal/nginx-server.erb'),
   }
-  
+
 }
 
 Package['nginx'] -> Class['drupal::configuration']

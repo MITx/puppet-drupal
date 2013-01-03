@@ -16,9 +16,8 @@
 #   }
 #
 class drupal {
-  include mysql::server
-  include drupal::deps
 
+  include drupal::deps
   php::extension { 'apc' : ensure => enabled }
   php::extension { 'curl' : ensure => enabled }
   php::extension { 'gd' : ensure => enabled }
