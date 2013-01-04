@@ -16,12 +16,15 @@
 class drupal::nginx {
 
   # Ensure Nginx and PHP-FPM are installed.
-  include nginx
   include php::sapi::fpm
+  class { '::nginx':
+    basic_auth        => true,
+    htpassword_suffix => 'drupal',
+  }
 
   # Install Drush and our configuration
   include drupal
-  include drupal::drush  
+  include drupal::drush
   include drupal::nginx::configuration
 
   # Update the PHP memory limit.
