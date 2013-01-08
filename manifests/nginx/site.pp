@@ -33,25 +33,26 @@
 #   }
 #
 define drupal::nginx::site (
-    $ensure = 'present',
     $path,
     $hostname,
+    $ensure = 'present',
     $aliases = [],
     $pool = 'www',
     $redirect_hosts = '',
     $sslkey = undef,
     $sslcrt = undef,
-    $passwdfile = ''
-    $db_config = {
+    $passwdfile = '',
+) {
+
+  $db_config = hiera_hash('drupal::db_config', {
       'database' => 'edx',
       'username' => 'root',
       'password' => 'root',
-      'host' => 'localhost',
-      'port' => '',
-      'driver' => 'mysql',
-      'prefix' => '',
-    }
-) {
+      'host'     => 'localhost',
+      'port'     => '',
+      'driver'   => 'mysql',
+      'prefix'   => '',
+  })
 
   include drupal::nginx
   include ::nginx
@@ -60,25 +61,18 @@ define drupal::nginx::site (
   # Drupal::Site["$title"] ~> Class['nginx::service']
 
   # XXX TODO: These paths should be set in drupal::params
-  $site_config = "/etc/nginx/sites-available"
-  $nginx_fastcgi_config = "/etc/nginx/includes/fastcgi_params.conf"
-  $nginx_site_config = "/etc/nginx/includes/drupal_site_config.conf"
-
-  case $ensure {
-    'present' : {
-      # Require File[$path]
-      # Require Php::Fpm::Pool[$pool]
-    }
-  }
+  $site_config = '/etc/nginx/sites-available'
+  $nginx_fastcgi_config = '/etc/nginx/includes/fastcgi_params.conf'
+  $nginx_site_config = '/etc/nginx/includes/drupal_site_config.conf'
 
   # Build the site configuration file.
   $uri = "http://$hostname/"
-  $listen = "80"
+  $listen = '80'
 
   # Create the configuration file for the site.
   file { "drupal-site-$title" :
-    ensure => present,
-    path => "$site_config/drupal-$title",
+    ensure  => present,
+    path    => "$site_config/drupal-$title",
     content => template('drupal/nginx-site.erb'),
     # TODO this can probably be removed?
     # require => [Class['drupal::configuration']],
