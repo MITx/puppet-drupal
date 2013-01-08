@@ -1,0 +1,9 @@
+<% require 'json'
+
+env = scope.lookupvar('drupal::nginx::site::db_config')
+
+-%>
+
+<%= JSON.pretty_generate(env) %>
+
+

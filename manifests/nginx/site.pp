@@ -42,6 +42,15 @@ define drupal::nginx::site (
     $sslkey = undef,
     $sslcrt = undef,
     $passwdfile = ''
+    $db_config = {
+      'database' => 'edx',
+      'username' => 'root',
+      'password' => 'root',
+      'host' => 'localhost',
+      'port' => '',
+      'driver' => 'mysql',
+      'prefix' => '',
+    }
 ) {
 
   include drupal::nginx
@@ -73,6 +82,13 @@ define drupal::nginx::site (
     content => template('drupal/nginx-site.erb'),
     # TODO this can probably be removed?
     # require => [Class['drupal::configuration']],
+  }
+  # auth.json for db credentials
+
+  file { '/opt/wwc/auth.json':
+    ensure  => file,
+    content => template('drupal/auth.json.erb'),
+    mode    => '0600',
   }
 
   # Link the configuration file into place.
