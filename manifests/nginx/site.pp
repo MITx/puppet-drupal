@@ -83,8 +83,8 @@ define drupal::nginx::site (
   file { '/opt/wwc/settings.php':
     ensure  => file,
     content => template('drupal/settings.php.erb'),
-    mode    => '0600',
-    owner   => 'www-data'
+    mode    => '0400',
+    owner   => 'root'
   }
 
   # Link the configuration file into place.
