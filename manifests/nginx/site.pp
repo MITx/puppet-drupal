@@ -77,12 +77,14 @@ define drupal::nginx::site (
     # TODO this can probably be removed?
     # require => [Class['drupal::configuration']],
   }
-  # auth.json for db credentials
 
-  file { '/opt/wwc/auth.json':
+  # settings.php is a template which has the db auth credentials
+
+  file { '/opt/wwc/settings.php':
     ensure  => file,
-    content => template('drupal/auth.json.erb'),
+    content => template('drupal/settings.php.erb'),
     mode    => '0600',
+    owner   => 'www-data'
   }
 
   # Link the configuration file into place.
