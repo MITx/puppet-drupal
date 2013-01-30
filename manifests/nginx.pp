@@ -17,9 +17,11 @@ class drupal::nginx {
 
   # Ensure Nginx and PHP-FPM are installed.
   include php::sapi::fpm
-  class { '::nginx':
-    basic_auth        => true,
-    htpassword_suffix => 'drupal',
+  include '::nginx'
+
+  nginx::htpasswd::add { 'drupal':
+    user => 'edx',
+    hash => '$apr1$5IoXSBZr$avDUSZ4RhhZ5A0MR9eqS0.',
   }
 
   # Install Drush and our configuration

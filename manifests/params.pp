@@ -20,8 +20,8 @@ class drupal::params {
 
   # Run drush cron-core as this user
 	$cron_user = $operatingsystem ? {
-		ubuntu => 'www-data',
-		debian => 'www-data',
+		ubuntu => 'www',
+		debian => 'www',
 		default => 'nobody',
 	}
 
